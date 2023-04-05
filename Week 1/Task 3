@@ -1,0 +1,12 @@
+my_array = [1, 2, 3]
+
+while True:
+    try:
+        user_input = int(input("Enter a number to add to the array: "))
+        my_array.append(user_input)
+        print("Updated array:", my_array)
+    except ValueError:
+        print("Invalid input. Please enter a number.")
+    continue_prompt = input("Do you want to add another number? (y/n): ")
+    if continue_prompt.lower() != 'y':
+        break
