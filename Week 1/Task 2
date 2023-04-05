@@ -1,0 +1,7 @@
+a = int(input())
+
+def square():
+    res = a * a
+    print(res)
+
+square()
