@@ -1,0 +1,45 @@
+def is_prime(n):
+    if n < 2:
+        return False
+    for i in range(2, int(n ** 0.5) + 1):
+        if n % i == 0:
+            return False
+    return True
+
+def write_numbers_to_file(file_name):
+    with open(file_name, 'w') as file:
+        while True:
+            try:
+                num = int(input("Enter a number (or enter -1 to stop): "))
+                if num == -1:
+                    break
+                file.write(str(num) + '\n')
+            except ValueError:
+                print("Invalid input. Please enter a valid integer.")
+
+def sort_numbers(file_name):
+    even  = []
+    odd   = []
+    prime = []
+    with open(file_name, 'r') as file:
+        for line in file:
+            num = int(line.strip())
+            if num % 2 == 0:
+                even.append(num)
+            else:
+                odd.append(num)
+            if is_prime(num):
+                prime.append(num)
+    with open("output.txt", 'w') as file:
+        file.write("Even  : " + ' '.join(map(str, even)) + '\n')
+        file.write("Odd   : " + ' '.join(map(str, odd)) + '\n')
+        file.write("Prime : " + ' '.join(map(str, prime)))
+
+def main():
+    file_name = "numbers.txt"
+    write_numbers_to_file(file_name)
+    sort_numbers(file_name)
+    print("Numbers sorted and written to output file.")
+
+if __name__ == '__main__':
+    main()
