@@ -1,0 +1,43 @@
+def create_file():
+    file_name = input("Enter file name to create : ")
+    with open(file_name, 'w') as file:
+        print("File created successfully!")
+
+def copy_file():
+    source_file = input("Enter source file name : ")
+    destination_file = input("Enter destination file name : ")
+    with open(source_file, 'r') as source:
+        with open(destination_file, 'w') as destination:
+            for line in source:
+                destination.write(line)
+    print("File copied successfully!")
+
+def display_file():
+    file_name = input("Enter file name to display : ")
+    with open(file_name, 'r') as file:
+        for line in file:
+            print(line.strip())
+
+def main():
+    while True:
+        print("        MENU")
+        print("        ----")
+        print("1. Create a new file")
+        print("2. Copy contents from file to another")
+        print("3. Display a file")
+        print("4. Exit")
+        choice = input("Enter your choice : ")
+        if choice == '1':
+            create_file()
+        elif choice == '2':
+            copy_file()
+        elif choice == '3':
+            display_file()
+        elif choice == '4':
+            print("Ending the program!")
+            break
+        else:
+            print("Error!!")
+
+if __name__ == '__main__':
+    main()
