@@ -1,0 +1,85 @@
+import mysql.connector
+
+conn = mysql.connector.connect(
+    host='localhost',
+    user='root',
+    password='password',
+    database='library'
+)
+
+cursor = conn.cursor()
+
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS books (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        title VARCHAR(255),
+        author VARCHAR(255),
+        return_date DATE,
+        stock INT
+    )
+''')
+
+def add_book():
+    title = input('Enter book title: ')
+    author = input('Enter book author: ')
+    return_date = input('Enter return date (YYYY-MM-DD): ')
+    stock = int(input('Enter stock count: '))
+    cursor.execute('INSERT INTO books (title, author, return_date, stock) VALUES (%s, %s, %s, %s)', (title, author, return_date, stock))
+    conn.commit()
+    print('Book added successfully.')
+
+def update_stock():
+    title = input('Enter book title: ')
+    stock = int(input('Enter new stock count: '))
+    cursor.execute('UPDATE books SET stock = %s WHERE title = %s', (stock, title))
+    conn.commit()
+    print('Stock updated successfully.')
+
+def delete_book():
+    title = input('Enter book title: ')
+    cursor.execute('DELETE FROM books WHERE title = %s', (title,))
+    conn.commit()
+    print('Book deleted successfully.')
+
+def display_books():
+    cursor.execute('SELECT * FROM books')
+    books = cursor.fetchall()
+    print('ID\tTitle\tAuthor\tReturn Date\tStock')
+    for book in books:
+        print(f'{book[0]}\t{book[1]}\t{book[2]}\t{book[3]}\t{book[4]}')
+
+def renew_book():
+    title = input('Enter book title: ')
+    return_date = input('Enter new return date (YYYY-MM-DD): ')
+    cursor.execute('UPDATE books SET return_date = %s WHERE title = %s', (return_date, title))
+    conn.commit()
+    print('Return date renewed successfully.')
+
+def display_menu():
+    print('Library Register')
+    print('1. Add book')
+    print('2. Update stock')
+    print('3. Delete book')
+    print('4. Display all books')
+    print('5. Renew book return date')
+    print('6. Quit')
+
+while True:
+    display_menu()
+    choice = int(input('Enter your choice: '))
+    if choice == 1:
+        add_book()
+    elif choice == 2:
+        update_stock()
+    elif choice == 3:
+        delete_book()
+    elif choice == 4:
+        display_books()
+    elif choice == 5:
+        renew_book()
+    elif choice == 6:
+        break
+    else:
+        print('Invalid choice. Please try again.')
+
+conn.close()
