@@ -1,0 +1,15 @@
+
+file_name = "Personal_Information.txt"  
+
+name  = str(input("Enter your name         : "))
+age   = int(input("Enter your age          : "))
+email = str(input("Enter your email        : "))
+phone = int(input("Enter your phone number : "))
+
+with open(file_name, 'w') as file:
+    file.write(f"Name  : {name} \n")
+    file.write(f"Age   : {age}  \n")
+    file.write(f"Email : {email}\n")
+    file.write(f"Phone : {phone}\n")
+
+print("Personal information is written into the file : ", file_name)
