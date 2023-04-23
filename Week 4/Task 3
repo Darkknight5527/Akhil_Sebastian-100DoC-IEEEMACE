@@ -1,0 +1,88 @@
+import mysql.connector
+
+# connect to the MySQL server
+conn = mysql.connector.connect(
+    host='localhost',
+    user='root',
+    password='password',
+    database='shopping_cart'
+)
+
+# create a cursor object to execute SQL commands
+cursor = conn.cursor()
+
+# create a table to store products' info
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS products (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255),
+        price FLOAT,
+        description TEXT
+    )
+''')
+
+# define a function to add a product
+def add_product():
+    name = input('Enter product name: ')
+    price = float(input('Enter product price: '))
+    description = input('Enter product description: ')
+    cursor.execute('INSERT INTO products (name, price, description) VALUES (%s, %s, %s)', (name, price, description))
+    conn.commit()
+    print('Product added successfully.')
+
+# define a function to display all products
+def display_products():
+    cursor.execute('SELECT * FROM products')
+    products = cursor.fetchall()
+    print('ID\tName\tPrice\tDescription')
+    for product in products:
+        print(f'{product[0]}\t{product[1]}\t{product[2]}\t{product[3]}')
+
+# define a function to add a product to the cart
+def add_to_cart():
+    product_id = int(input('Enter product ID to add to cart: '))
+    quantity = int(input('Enter quantity: '))
+    cursor.execute('SELECT * FROM products WHERE id = %s', (product_id,))
+    product = cursor.fetchone()
+    if not product:
+        print('Invalid product ID.')
+    else:
+        cursor.execute('INSERT INTO cart (product_id, quantity) VALUES (%s, %s)', (product_id, quantity))
+        conn.commit()
+        print('Product added to cart.')
+
+# define a function to display the contents of the cart
+def display_cart():
+    cursor.execute('''
+        SELECT cart.quantity, products.name, products.price, products.price * cart.quantity AS subtotal
+        FROM cart
+        INNER JOIN products ON cart.product_id = products.id
+    ''')
+    cart_items = cursor.fetchall()
+    total_price = sum(item[3] for item in cart_items)
+    print('Quantity\tName\tPrice\tSubtotal')
+    for item in cart_items:
+        print(f'{item[0]}\t{item[1]}\t{item[2]}\t{item[3]}')
+    print(f'Total price: {total_price}')
+
+# define a function to remove a product from the cart
+def remove_from_cart():
+    product_id = int(input('Enter product ID to remove from cart: '))
+    cursor.execute('DELETE FROM cart WHERE product_id = %s', (product_id,))
+    conn.commit()
+    print('Product removed from cart.')
+
+# define a function to checkout and complete the purchase
+def checkout():
+    cursor.execute('SELECT * FROM cart')
+    cart_items = cursor.fetchall()
+    if not cart_items:
+        print('Cart is empty.')
+    else:
+        total_price = sum(item[2] * item[3] for item in cart_items)
+        print(f'Total price: {total_price}')
+        confirm = input('Confirm purchase (y/n): ')
+        if confirm.lower() == 'y':
+            for item in cart_items:
+                cursor.execute('INSERT INTO orders (product_id, quantity) VALUES (%s, %s)', (item[1], item[2]))
+                cursor.execute('UPDATE products SET')
